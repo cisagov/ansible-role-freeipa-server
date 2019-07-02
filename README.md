@@ -1,16 +1,11 @@
-# skeleton-ansible-role #
+# ansible-role-freeipa #
 
-[![Build Status](https://travis-ci.com/cisagov/skeleton-ansible-role.svg?branch=develop)](https://travis-ci.com/cisagov/skeleton-ansible-role)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/cisagov/skeleton-ansible-role.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/skeleton-ansible-role/alerts/)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/cisagov/skeleton-ansible-role.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/skeleton-ansible-role/context:python)
+[![Build Status](https://travis-ci.com/cisagov/ansible-role-freeipa.svg?branch=develop)](https://travis-ci.com/cisagov/ansible-role-freeipa)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/cisagov/ansible-role-freeipa.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/ansible-role-freeipa/alerts/)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/cisagov/ansible-role-freeipa.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/ansible-role-freeipa/context:python)
 
-This is a skeleton project that can be used to quickly get a new
-[cisagov](https://github.com/cisagov) Ansible role GitHub project
-started.  This skeleton project contains [licensing
-information](LICENSE), as well as [pre-commit
-hooks](https://pre-commit.com) and a [Travis
-CI](https://travis-ci.com) configuration appropriate for an Ansible
-role.
+This is an Ansible role for installing
+[FreeIPA](https://www.freeipa.org).
 
 ## Requirements ##
 
@@ -29,11 +24,11 @@ None.
 Here's how to use it in a playbook:
 
 ```yaml
-- hosts: all
+- hosts: freeipa
   become: yes
   become_method: sudo
   roles:
-    - skeleton
+    - freeipa
 ```
 
 ## Contributing ##
@@ -56,4 +51,4 @@ with this waiver of copyright interest.
 
 ## Author Information ##
 
-First Last - <first.last@trio.dhs.gov>
+Shane Frasier - <jeremy.frasier@trio.dhs.gov>

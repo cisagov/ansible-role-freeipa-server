@@ -1,18 +1,15 @@
 ---
 galaxy_info:
-  author: First Last
-  description: Skeleton Ansible role
+  author: Shane Frasier
+  description: Ansible role for installing FreeIPA
   company: CISA NCATS
   license: CC0
   min_ansible_version: 2.0
   platforms:
-    - name: Debian
+    - name: Fedora
       versions:
-        - stretch
-    - name: Amazon
-      versions:
-        - 2018.03
+        - 30
   galaxy_tags:
-    - skeleton
+    - freeipa
 
 dependencies: []

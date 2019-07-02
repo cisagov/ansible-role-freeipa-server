@@ -3,3 +3,14 @@
   package:
     name: freeipa-server
     state: present
+
+- name: Configure FreeIPA
+  command:
+    argv:
+      - ipa-server-install
+      - --domain={{ freeipa_domain }}
+      - --realm={{ freeipa_realm }}
+      - --ds-password={{ freeipa_ds_password }}
+      - --admin-password={{ freeipa_admin_password }}
+      - --hostname={{ freeipa_hostname }}
+      - --unattended

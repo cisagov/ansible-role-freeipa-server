@@ -1,0 +1,15 @@
+---
+# The FreeIPA domain
+freeipa_domain: "{{ lookup('aws_ssm', '/freeipa/domain') }}"
+
+# The FreeIPA realm
+freeipa_realm: "{{ lookup('aws_ssm', '/freeipa/realm') }}"
+
+# The hostname of the FreeIPA server
+freeipa_hostname: "{{ lookup('aws_ssm', '/freeipa/hostname') }}"
+
+# The root password for the FreeIPA server directory service
+freeipa_ds_password: "{{ lookup('aws_ssm', '/freeipa/ds_password') }}"
+
+# The admin password for the FreeIPA server web UI
+freeipa_admin_password: "{{ lookup('aws_ssm', '/freeipa/admin_password') }}"

@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   author: Shane Frasier
-  description: Ansible role for installing FreeIPA
+  description: Ansible role for installing FreeIPA server
   company: CISA NCATS
   license: CC0
   min_ansible_version: 2.0

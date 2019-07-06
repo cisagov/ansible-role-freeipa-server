@@ -8,7 +8,7 @@ galaxy_info:
   platforms:
     - name: Fedora
       versions:
-        - 30
+        - 29
   galaxy_tags:
     - freeipa
 

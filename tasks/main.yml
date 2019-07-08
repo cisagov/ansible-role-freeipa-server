@@ -1,5 +1,5 @@
 ---
-- name: Install FreeIPA
+- name: Install FreeIPA server
   package:
     name: freeipa-server
     state: present

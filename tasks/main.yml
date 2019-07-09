@@ -1,5 +1,7 @@
 ---
 - name: Install FreeIPA server
   package:
-    name: freeipa-server
+    name:
+      - freeipa-server
+      - freeipa-server-dns
     state: present

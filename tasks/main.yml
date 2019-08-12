@@ -3,5 +3,4 @@
   package:
     name:
       - freeipa-server
-      - freeipa-server-dns
     state: present

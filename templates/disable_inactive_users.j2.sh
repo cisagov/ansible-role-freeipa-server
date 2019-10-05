@@ -5,6 +5,13 @@ set -o errexit
 set -o pipefail
 
 ###
+# Let's use a temporary kerberos cred cache file so we don't clobber
+# anyone else's
+###
+KRB5CCNAME=$(mktemp)
+export KRB5CCNAME
+
+###
 # We're running as root, so login to kerberos using the host's keytab
 #
 # It would be better to create a kerberos service instead, but

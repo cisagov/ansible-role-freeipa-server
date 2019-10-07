@@ -1,6 +1,15 @@
 ---
-- name: Install FreeIPA server
-  package:
-    name:
-      - freeipa-server
-    state: present
+- name: Install FreeIPA server and a cron job to disable inactive users
+  block:
+    - name: Install FreeIPA server
+      package:
+        name:
+          - freeipa-server
+        state: present
+    - name: Install a daily cron job to disable inactive users
+      template:
+        src: disable_inactive_users.j2.sh
+        dest: /etc/cron.daily/disable_inactive_users.sh
+        mode: 0500
+  tags:
+    - freeipa-server

@@ -1,0 +1,17 @@
+---
+# We want to copy a cron job to /etc/cron.daily, so that directory
+# needs to exist.  One way to make sure that it does is to go ahead
+# and install cron.  On Fedora, the cron package name is cronie.
+- name: Group hosts by OS distribution
+  hosts: all
+  tasks:
+    - name: Group hosts by OS distribution
+      group_by:
+        key: os_{{ ansible_facts['distribution'] }}
+- name: Install cronie (Fedora)
+  hosts: os_Fedora
+  tasks:
+    - name: Install cronie (Fedora)
+      package:
+        name:
+          - cronie

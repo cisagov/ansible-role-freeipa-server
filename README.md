@@ -1,6 +1,6 @@
 # ansible-role-freeipa-server #
 
-[![Build Status](https://travis-ci.com/cisagov/ansible-role-freeipa-server.svg?branch=develop)](https://travis-ci.com/cisagov/ansible-role-freeipa-server)
+[![GitHub Build Status](https://github.com/cisagov/ansible-role-freeipa-server/workflows/build/badge.svg)](https://github.com/cisagov/ansible-role-freeipa-server/actions)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/cisagov/ansible-role-freeipa-server.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/ansible-role-freeipa-server/alerts/)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/cisagov/ansible-role-freeipa-server.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/ansible-role-freeipa-server/context:python)
 

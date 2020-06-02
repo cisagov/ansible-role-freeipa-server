@@ -53,6 +53,7 @@ ipa-server-install --realm="$realm" \
                    --admin-password="$admin_pw" \
                    --hostname="$hostname" \
                    --ip-address="$ip_address" \
+                   --no-ntp \
                    --no_hbac_allow \
                    --unattended
 

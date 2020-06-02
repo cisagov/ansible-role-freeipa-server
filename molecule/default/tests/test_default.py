@@ -19,13 +19,18 @@ def test_packages(host, pkg):
 
 
 @pytest.mark.parametrize(
-    "f,content", [("/etc/cron.daily/disable_inactive_users.sh", "-45 days")]
+    "f",
+    [
+        "/etc/cron.daily/disable_inactive_users.sh",
+        "/usr/local/share/dhsca_fullpath.p7b",
+        "/usr/local/share/dhsca_fullpath.pem",
+        "/usr/local/bin/setup_freeipa_replica.sh",
+        "/usr/local/bin/setup_freeipa_server.sh",
+    ],
 )
-def test_files(host, f, content):
+def test_files(host, f):
     """Test that the appropriate files were installed."""
     assert host.file(f).exists
     assert host.file(f).is_file
     assert host.file(f).user == "root"
     assert host.file(f).group == "root"
-    assert host.file(f).mode == 0o500
-    assert host.file(f).contains(content)

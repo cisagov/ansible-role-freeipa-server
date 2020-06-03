@@ -59,7 +59,7 @@ ipa-server-install --realm="$realm" \
 
 # Add the DHS CA to the pkinit anchors
 sed -i \
-    "/pkinit_anchors = FILE:\/var\/kerberos\/krb5kdc\/cacert\.pem/a \ \ pkinit_anchors = /usr/local/share/dhsca_fullpath.pem" \
+    "/pkinit_anchors = FILE:\/var\/kerberos\/krb5kdc\/cacert\.pem/a \ \ pkinit_anchors = FILE:/usr/local/share/dhsca_fullpath.pem" \
     /var/kerberos/krb5kdc/kdc.conf
 systemctl restart krb5kdc.service
 

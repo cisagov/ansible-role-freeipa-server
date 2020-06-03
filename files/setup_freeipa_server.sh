@@ -67,5 +67,7 @@ echo "$admin_pw" | kinit admin
 # Trust the self-signed FreeIPA CA
 ipa-certupdate
 # Create the dhs_certmapdata rule
-ipa certmaprule-add dhs_certmapdata --matchrule '<ISSUER>O=U.S. Government'
+ipa certmaprule-add dhs_certmapdata \
+    --matchrule '<ISSUER>O=U.S. Government' \
+    --maprule '(ipacertmapdata=X509:<I>{issuer_dn!nss_x500}<S>{subject_dn!nss_x500})'
 kdestroy

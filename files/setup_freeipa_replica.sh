@@ -51,7 +51,8 @@ do
 done
 
 # Install the replica
-ipa-replica-install --admin-password="$admin_pw" \
+ipa-replica-install --setup-ca \
+                    --admin-password="$admin_pw" \
                     --hostname="$hostname" \
                     --ip-address="$ip_address" \
                     --no-ntp \
@@ -59,7 +60,7 @@ ipa-replica-install --admin-password="$admin_pw" \
 
 # Add the DHS CA to the pkinit anchors
 sed -i \
-    "/pkinit_anchors = FILE:\/var\/kerberos\/krb5kdc\/cacert\.pem/a \ \ pkinit_anchors = /usr/local/share/dhsca_fullpath.pem" \
+    "/pkinit_anchors = FILE:\/var\/kerberos\/krb5kdc\/cacert\.pem/a \ \ pkinit_anchors = FILE:/usr/local/share/dhsca_fullpath.pem" \
     /var/kerberos/krb5kdc/kdc.conf
 systemctl restart krb5kdc.service
 

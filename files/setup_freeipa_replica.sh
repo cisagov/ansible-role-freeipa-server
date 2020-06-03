@@ -51,7 +51,8 @@ do
 done
 
 # Install the replica
-ipa-replica-install --admin-password="$admin_pw" \
+ipa-replica-install --setup-ca \
+                    --admin-password="$admin_pw" \
                     --hostname="$hostname" \
                     --ip-address="$ip_address" \
                     --no-ntp \

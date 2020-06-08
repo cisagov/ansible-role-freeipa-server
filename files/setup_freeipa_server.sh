@@ -4,16 +4,33 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-# The admin password for the IPA server's Kerberos admin role
-admin_pw=password
-# The password for the IPA server's directory service
-directory_service_pw=password
-# The domain for the IPA server (e.g. example.com)
-domain=example.com
-# The hostname of the IPA server (e.g. ipa.example.com)
-hostname=ipa.$domain
-# Realm for the IPA server (e.g. EXAMPLE.COM)
-realm=${domain^^}
+# These variables must be set before execution:
+#
+# admin_pw: The password for the IPA server's Kerberos admin role.
+#
+# directory_service_pw: The password for the IPA server's directory service.
+#
+# domain: The domain for the IPA server (e.g. example.com).
+#
+# hostname: The hostname of this IPA server (e.g. ipa1.example.com).
+#
+# realm: The realm for the IPA server (e.g. EXAMPLE.COM).
+# replicate (e.g. ipa0.example.com).
+
+# Load above variables from a file installed by cloud-init:
+freeipa_vars_file=/var/lib/cloud/instance/freeipa-vars.sh
+
+if [[ -f "$freeipa_vars_file" ]]; then
+    # Disable this warning since the file is only available at runtime
+    # on the server.
+    #
+    # shellcheck disable=SC1090
+    source "$freeipa_vars_file"
+else
+    echo "FreeIPA variables file does not exist: $freeipa_vars_file"
+    echo "It should have been created by cloud-init at boot."
+    exit 254
+fi
 
 # Get the default Ethernet interface
 function get_interface {
@@ -47,6 +64,13 @@ do
 done
 
 # Install the server
+#
+# realm, domain, directory_service_pw, admin_pw, and hostname are
+# defined in the FreeIPA variables file that is sourced toward the top
+# of this file.  Hence we can ignore the "undefined variable" warnings
+# from shellcheck.
+#
+# shellcheck disable=SC2154
 ipa-server-install --realm="$realm" \
                    --domain="$domain" \
                    --ds-password="$directory_service_pw" \

@@ -24,8 +24,7 @@ def test_packages(host, pkg):
         "/etc/cron.daily/disable_inactive_users.sh",
         "/usr/local/share/dhsca_fullpath.p7b",
         "/usr/local/share/dhsca_fullpath.pem",
-        "/usr/local/sbin/setup_freeipa_replica.sh",
-        "/usr/local/sbin/setup_freeipa_server.sh",
+        "/usr/local/sbin/setup_freeipa.sh",
     ],
 )
 def test_files(host, f):

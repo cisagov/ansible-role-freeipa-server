@@ -64,8 +64,6 @@ sed -i \
 systemctl restart krb5kdc.service
 
 echo "$admin_pw" | kinit admin
-# Trust the self-signed FreeIPA CA
-ipa-certupdate
 # Create the dhs_certmapdata rule
 ipa certmaprule-add dhs_certmapdata \
     --matchrule '<ISSUER>O=U.S. Government' \

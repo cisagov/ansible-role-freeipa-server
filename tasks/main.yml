@@ -27,7 +27,7 @@
 - name: Copy server and replica setup scripts
   copy:
     src: "{{ item }}"
-    dest: /usr/local/bin
+    dest: /usr/local/sbin
     mode: 0700
   loop:
     - setup_freeipa_replica.sh

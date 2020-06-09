@@ -76,7 +76,7 @@ function setup {
     done
 
     case "$1" in
-        server)
+        master)
             # Install the server
             #
             # realm, domain, directory_service_pw, admin_pw, and
@@ -130,7 +130,7 @@ function setup {
                                 --unattended
             ;;
         *)
-            echo "Unknown installation type.  Valid installation types are: server | replica"
+            echo "Unknown installation type.  Valid installation types are: master | replica"
             exit 255
             ;;
     esac
@@ -150,7 +150,7 @@ function setup {
 
 if [ $# -lt 1 ]
 then
-    echo "Installation type required: server | replica"
+    echo "Installation type required: master | replica"
     exit 255
 fi
 

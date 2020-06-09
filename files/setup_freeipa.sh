@@ -6,10 +6,6 @@ set -o pipefail
 
 # These variables must be set before server installation:
 #
-# admin_pw: The password for the IPA server's Kerberos admin role.
-#
-# directory_service_pw: The password for the IPA server's directory service.
-#
 # domain: The domain for the IPA server (e.g. example.com).
 #
 # hostname: The hostname of this IPA server (e.g. ipa1.example.com).
@@ -19,8 +15,6 @@ set -o pipefail
 #
 #
 # These variables must be set before replica installation:
-#
-# admin_pw: The password for the IPA server's Kerberos admin role.
 #
 # hostname: The hostname of this IPA server (e.g. ipa1.example.com).
 #
@@ -79,28 +73,25 @@ function setup {
         master)
             # Install the server
             #
-            # realm, domain, directory_service_pw, admin_pw, and
-            # hostname are defined in the FreeIPA variables file that
-            # is sourced toward the top of this file.  Hence we can
-            # ignore the "undefined variable" warnings from shellcheck.
+            # realm, domain, and hostname are defined in the FreeIPA
+            # variables file that is sourced toward the top of this
+            # file.  Hence we can ignore the "undefined variable"
+            # warnings from shellcheck.
             #
             # shellcheck disable=SC2154
-            ipa-server-install --realm="$realm" \
+            ipa-server-install --setup-kra \
+                               --realm="$realm" \
                                --domain="$domain" \
-                               --ds-password="$directory_service_pw" \
-                               --admin-password="$admin_pw" \
                                --hostname="$hostname" \
                                --ip-address="$ip_address" \
                                --no-ntp \
                                --no_hbac_allow \
-                               --unattended
+                               --mkhomedir
 
-            echo "$admin_pw" | kinit admin
             # Create the dhs_certmapdata rule
             ipa certmaprule-add dhs_certmapdata \
                 --matchrule '<ISSUER>O=U.S. Government' \
                 --maprule '(ipacertmapdata=X509:<I>{issuer_dn!nss_x500}<S>{subject_dn!nss_x500})'
-            kdestroy
             ;;
         replica)
             # Wait until the master is up and running before installing.
@@ -117,17 +108,17 @@ function setup {
 
             # Install the replica
             #
-            # admin_pw and hostname are defined in the FreeIPA variables file that
-            # is sourced toward the top of this file.  Hence we can ignore the
-            # "undefined variable" warnings from shellcheck.
+            # hostname is defined in the FreeIPA variables file that
+            # is sourced toward the top of this file.  Hence we can
+            # ignore the "undefined variable" warning from shellcheck.
             #
             # shellcheck disable=SC2154
             ipa-replica-install --setup-ca \
-                                --admin-password="$admin_pw" \
+                                --setup-kra \
                                 --hostname="$hostname" \
                                 --ip-address="$ip_address" \
                                 --no-ntp \
-                                --unattended
+                                --mkhomedir
             ;;
         *)
             echo "Unknown installation type.  Valid installation types are: master | replica"
@@ -141,10 +132,11 @@ function setup {
         /var/kerberos/krb5kdc/kdc.conf
     systemctl restart krb5kdc.service
 
-    # Remove passwords from FreeIPA variables file
-    sed -i \
-        "s/^admin_pw=.*/admin_pw=/g;s/^directory_service_pw=.*/directory_service_pw=/g" \
-        $freeipa_vars_file
+    # Add a principal alias for the instance ID so folks can ssh in
+    # via SSM Session Manager.
+    ipa host-add-principal \
+        "$hostname" \
+        "$(curl http://169.254.169.254/latest/meta-data/instance-id)"."$domain"
 }
 
 

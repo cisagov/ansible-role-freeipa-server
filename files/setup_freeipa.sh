@@ -50,11 +50,12 @@ function get_ip {
 
 # Install FreeIPA as a server or replica
 function setup {
-    interface=$(get_interface)
-    ip_address=$(get_ip "$interface")
-
     case "$1" in
         master)
+            # Grab our IP address
+            interface=$(get_interface)
+            ip_address=$(get_ip "$interface")
+
             # Install the master
             #
             # realm, domain, and hostname are defined in the FreeIPA

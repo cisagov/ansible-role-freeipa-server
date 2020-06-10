@@ -15,10 +15,9 @@ set -o pipefail
 #
 # These variables must be set before replica installation:
 #
-# hostname: The hostname of this IPA server (e.g. ipa1.example.com).
+# domain: The domain for the IPA server (e.g. example.com).
 #
-# master_hostname: The hostname of the IPA server to which to
-# replicate (e.g. ipa0.example.com).
+# hostname: The hostname of this IPA server (e.g. ipa1.example.com).
 
 # Load above variables from a file installed by cloud-init:
 freeipa_vars_file=/var/lib/cloud/instance/freeipa-vars.sh
@@ -49,24 +48,10 @@ function get_ip {
         cut --delimiter='/' --fields=1
 }
 
-# Get the PTR record corresponding to an IP
-function get_ptr {
-    dig +noall +ans -x "$1" | sed "s/.*PTR[[:space:]]*\(.*\)/\1/"
-}
-
 # Install FreeIPA as a server or replica
 function setup {
     interface=$(get_interface)
     ip_address=$(get_ip "$interface")
-
-    # Wait until the IP address has a non-Amazon PTR record before
-    # proceeding
-    ptr=$(get_ptr "$ip_address")
-    while grep amazon <<< "$ptr"
-    do
-        sleep 30
-        ptr=$(get_ptr "$ip_address")
-    done
 
     case "$1" in
         master)
@@ -93,31 +78,22 @@ function setup {
                 --maprule '(ipacertmapdata=X509:<I>{issuer_dn!nss_x500}<S>{subject_dn!nss_x500})'
             ;;
         replica)
-            # Wait until the master is up and running before installing.
-            #
-            # master_hostname is defined in the FreeIPA variables file
-            # that is sourced toward the top of this file.  Hence we
-            # can ignore the "undefined variable" warnings from shellcheck.
-            #
-            # shellcheck disable=SC2154
-            until ipa-replica-conncheck --replica="$master_hostname"
-            do
-                sleep 60
-            done
-
             # Install the replica
+            #
+            # For some reason ipa-server-install does not appear to
+            # pass the principal to ipa-client-install, so we first
+            # run ipa-client-install manually.
             #
             # hostname is defined in the FreeIPA variables file that
             # is sourced toward the top of this file.  Hence we can
             # ignore the "undefined variable" warning from shellcheck.
             #
             # shellcheck disable=SC2154
+            ipa-client-install --hostname="$hostname" \
+                               --mkhomedir \
+                               --no-ntp
             ipa-replica-install --setup-ca \
-                                --setup-kra \
-                                --hostname="$hostname" \
-                                --ip-address="$ip_address" \
-                                --no-ntp \
-                                --mkhomedir
+                                --setup-kra
             ;;
         *)
             echo "Unknown installation type.  Valid installation types are: master | replica"

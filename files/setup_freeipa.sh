@@ -72,7 +72,9 @@ function setup {
                                --no_hbac_allow \
                                --mkhomedir
 
-            # Create the dhs_certmapdata rule
+            # Get kerberos credentials and create the dhs_certmapdata
+            # rule
+            kinit admin
             ipa certmaprule-add dhs_certmapdata \
                 --matchrule '<ISSUER>O=U.S. Government' \
                 --maprule '(ipacertmapdata=X509:<I>{issuer_dn!nss_x500}<S>{subject_dn!nss_x500})'

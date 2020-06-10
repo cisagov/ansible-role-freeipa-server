@@ -70,7 +70,7 @@ function setup {
 
     case "$1" in
         master)
-            # Install the server
+            # Install the master
             #
             # realm, domain, and hostname are defined in the FreeIPA
             # variables file that is sourced toward the top of this

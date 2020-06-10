@@ -114,7 +114,7 @@ function setup {
     # via SSM Session Manager.
     ipa host-add-principal \
         "$hostname" \
-        "$(curl http://169.254.169.254/latest/meta-data/instance-id)"."$domain"
+        host/"$(curl http://169.254.169.254/latest/meta-data/instance-id)"."$domain"
 }
 
 

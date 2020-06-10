@@ -11,7 +11,6 @@ set -o pipefail
 # hostname: The hostname of this IPA server (e.g. ipa1.example.com).
 #
 # realm: The realm for the IPA server (e.g. EXAMPLE.COM).
-# replicate (e.g. ipa0.example.com).
 #
 #
 # These variables must be set before replica installation:

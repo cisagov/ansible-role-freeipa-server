@@ -132,7 +132,7 @@ function setup {
 }
 
 
-if [ $# -lt 1 ]
+if [ $# -ne 1 ]
 then
     echo "Installation type required: master | replica"
     exit 255

@@ -74,7 +74,21 @@ function setup {
                                --mkhomedir
 
             # Get kerberos credentials and create the dhs_certmapdata
-            # rule
+            # rule.  This rule is necessary in order to associate a
+            # cert with one or more users during PKINIT, which is
+            # itself necessary for FreeIPA to utilize the certmapdata
+            # in said users' LDAP configurations.  Without such a rule
+            # FreeIPA can only make use of the full certificate data
+            # in the users' LDAP entries, if present.  It is much
+            # easier and simpler to create certmapdata than to upload
+            # each users' full certificate.
+            #
+            # In other words, without this rule users cannot kinit
+            # with only their PIVs unless their entire certificate is
+            # uploaded into their LDAP entry.
+            #
+            # For more details, see here:
+            # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_and_managing_identity_management/conf-certmap-idm_configuring-and-managing-idm
             kinit admin
             ipa certmaprule-add dhs_certmapdata \
                 --matchrule '<ISSUER>O=U.S. Government' \

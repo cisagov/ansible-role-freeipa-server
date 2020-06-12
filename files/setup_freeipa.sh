@@ -42,10 +42,7 @@ function get_interface {
 # Get the IP address corresponding to an interface
 function get_ip {
     ip --family inet address show dev "$1" | \
-        grep inet | \
-        sed "s/^ *//" | \
-        cut --delimiter=' ' --fields=2 | \
-        cut --delimiter='/' --fields=1
+        grep --perl-regexp --only-matching 'inet \K[\d.]+'
 }
 
 # Install FreeIPA as a server or replica

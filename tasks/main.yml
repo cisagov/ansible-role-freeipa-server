@@ -24,11 +24,8 @@
       -out /usr/local/share/dhsca_fullpath.pem
     creates: /usr/local/share/dhsca_fullpath.pem
 
-- name: Copy server and replica setup scripts
+- name: Copy setup script
   copy:
-    src: "{{ item }}"
-    dest: /usr/local/bin
+    src: setup_freeipa.sh
+    dest: /usr/local/sbin
     mode: 0700
-  loop:
-    - setup_freeipa_replica.sh
-    - setup_freeipa_server.sh

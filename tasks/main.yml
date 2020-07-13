@@ -28,4 +28,4 @@
   copy:
     src: setup_freeipa.sh
     dest: /usr/local/sbin
-    mode: 0700
+    mode: 0500

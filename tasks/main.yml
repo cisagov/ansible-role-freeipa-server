@@ -26,6 +26,6 @@
 
 - name: Copy setup script
   copy:
-    src: setup_freeipa.sh
+    src: 00_setup_freeipa.sh
     dest: /usr/local/sbin
-    mode: 0700
+    mode: 0500

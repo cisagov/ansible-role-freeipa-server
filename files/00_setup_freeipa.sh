@@ -71,25 +71,45 @@ function setup {
                                --mkhomedir
 
             # Get kerberos credentials and create the dhs_certmapdata
-            # rule.  This rule is necessary in order to associate a
-            # cert with one or more users during PKINIT, which is
-            # itself necessary for FreeIPA to utilize the certmapdata
-            # in said users' LDAP configurations.  Without such a rule
-            # FreeIPA can only make use of the full certificate data
-            # in the users' LDAP entries, if present.  It is much
-            # easier and simpler to create certmapdata than to upload
-            # each users' full certificate.
+            # rules.  These rules are necessary in order to associate
+            # a certificate with a user during PKINIT.
             #
-            # In other words, without this rule users cannot kinit
-            # with only their PIVs unless their entire certificate is
-            # uploaded into their LDAP entry.
+            # There is currently a bug in sssd where it does not
+            # properly escape parentheses in the certificate subject
+            # when performing an LDAP query.  See these links for more
+            # about this bug:
+            # * https://github.com/SSSD/sssd/issues/5135
+            # * https://github.com/SSSD/sssd/pull/1036
             #
-            # For more details, see here:
+            # This bug inhibits us from matching on user certmap data
+            # in the case of contractors, whose CNs contain the text
+            # "(affiliate)".  Hence we require two certmap rules: one
+            # for certificates whose CNs contain parentheses
+            # (e.g. contractor certificates) and therefore must match
+            # on the full certificate, and one for certificates whose
+            # CNs do not contain parentheses (e.g. fed certificates)
+            # and therefore can match on user certmap data.  It is
+            # preferable to match on user certmap data, since it
+            # should change less often than the full certificate.
+            #
+            # Once the sssd pull request mentioned above is approved,
+            # merged, and appears in a release, we should be able to
+            # use a single certmap rule for all users that leverages
+            # the user certmap data.
+            #
+            # For more details about FreeIPA, certmap rules, and
+            # certmap data, see here:
             # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_and_managing_identity_management/conf-certmap-idm_configuring-and-managing-idm
             kinit admin
             ipa certmaprule-add dhs_certmapdata \
-                --matchrule '<ISSUER>O=U.S. Government' \
-                --maprule '(ipacertmapdata=X509:<I>{issuer_dn!nss_x500}<S>{subject_dn!nss_x500})'
+                --matchrule '<ISSUER>O=U\.S\. Government' \
+                --maprule '(ipacertmapdata=X509:<I>{issuer_dn!nss_x500}<S>{subject_dn!nss_x500})' \
+                --desc 'For PIV certificates WITHOUT parentheses in the CN. No priority means lowest priority according to man sss-certmap.'
+            ipa certmaprule-add dhs_certmapdata_parens \
+                --matchrule '<ISSUER>O=U\.S\. Government<SUBJECT>CN=.*[\(\)].*' \
+                --maprule '(userCertificate;binary={cert})' \
+                --desc 'For PIV certificates WITH parentheses in the CN.  Zero is highest priority according to man sss-certmap.' \
+                --priority 0
             ;;
         replica)
             # Install the replica

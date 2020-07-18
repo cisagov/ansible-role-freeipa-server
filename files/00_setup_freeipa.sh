@@ -110,6 +110,15 @@ function setup {
                 --maprule '(userCertificate;binary={cert})' \
                 --desc 'For PIV certificates WITH parentheses in the CN.  Zero is highest priority according to man sss-certmap.' \
                 --priority 0
+
+            # We make use of user certmap data in order to match
+            # certificates with FreeIPA users.  It follows that folks
+            # who are in the user administrator role need permission
+            # to manage users' certmap data.  This permission is
+            # lacking from that role by default, but this command
+            # remedies that.
+            ipa privilege-add-permission "User Administrators" \
+                --permissions="System: Manage User Certificate Mappings"
             ;;
         replica)
             # Install the replica

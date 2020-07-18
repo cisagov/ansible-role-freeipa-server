@@ -70,6 +70,7 @@ function setup {
                                --no_hbac_allow \
                                --mkhomedir
 
+            kinit admin
             # Get kerberos credentials and create the dhs_certmapdata
             # rules.  These rules are necessary in order to associate
             # a certificate with a user during PKINIT.
@@ -100,7 +101,6 @@ function setup {
             # For more details about FreeIPA, certmap rules, and
             # certmap data, see here:
             # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_and_managing_identity_management/conf-certmap-idm_configuring-and-managing-idm
-            kinit admin
             ipa certmaprule-add dhs_certmapdata \
                 --matchrule '<ISSUER>O=U\.S\. Government' \
                 --maprule '(ipacertmapdata=X509:<I>{issuer_dn!nss_x500}<S>{subject_dn!nss_x500})' \

@@ -70,6 +70,7 @@ function setup {
                                --no_hbac_allow \
                                --mkhomedir
 
+            kinit admin
             # Get kerberos credentials and create the dhs_certmapdata
             # rules.  These rules are necessary in order to associate
             # a certificate with a user during PKINIT.
@@ -100,7 +101,6 @@ function setup {
             # For more details about FreeIPA, certmap rules, and
             # certmap data, see here:
             # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_and_managing_identity_management/conf-certmap-idm_configuring-and-managing-idm
-            kinit admin
             ipa certmaprule-add dhs_certmapdata \
                 --matchrule '<ISSUER>O=U\.S\. Government' \
                 --maprule '(ipacertmapdata=X509:<I>{issuer_dn!nss_x500}<S>{subject_dn!nss_x500})' \
@@ -110,6 +110,15 @@ function setup {
                 --maprule '(userCertificate;binary={cert})' \
                 --desc 'For PIV certificates WITH parentheses in the CN.  Zero is highest priority according to man sss-certmap.' \
                 --priority 0
+
+            # We make use of user certmap data in order to match
+            # certificates with FreeIPA users.  It follows that folks
+            # who are in the user administrator role need permission
+            # to manage users' certmap data.  This permission is
+            # lacking from that role by default, but this command
+            # remedies that.
+            ipa privilege-add-permission "User Administrators" \
+                --permissions="System: Manage User Certificate Mappings"
             ;;
         replica)
             # Install the replica

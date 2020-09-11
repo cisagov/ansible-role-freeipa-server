@@ -157,7 +157,9 @@ function setup {
         host/"$(curl --silent http://169.254.169.254/latest/meta-data/instance-id)"."$domain"
 
     # Enable features in the active authselect profile so that all necessary
-    # hardened rules will be activated.
+    # hardened rules will be activated.  Note that these features are enabled
+    # in ansible-role-hardening, however ipa-server-install and
+    # ipa-client-install clobber them, so we must re-enable them here.
     authselect enable-feature with-faillock
     authselect enable-feature with-fingerprint
     authselect enable-feature with-smartcard

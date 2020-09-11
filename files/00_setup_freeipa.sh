@@ -155,6 +155,12 @@ function setup {
     ipa host-add-principal \
         "$hostname" \
         host/"$(curl --silent http://169.254.169.254/latest/meta-data/instance-id)"."$domain"
+
+    # Enable features in the active authselect profile so that all necessary
+    # hardened rules will be activated.
+    authselect enable-feature with-faillock
+    authselect enable-feature with-fingerprint
+    authselect enable-feature with-smartcard
 }
 
 

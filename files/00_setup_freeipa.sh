@@ -106,9 +106,9 @@ function setup {
                 --maprule '(ipacertmapdata=X509:<I>{issuer_dn!nss_x500}<S>{subject_dn!nss_x500})' \
                 --desc 'For PIV certificates WITHOUT parentheses in the CN. No priority means lowest priority according to man sss-certmap.'
             ipa certmaprule-add dhs_certmapdata_parens \
-                --matchrule '<ISSUER>O=U\.S\. Government<SUBJECT>CN=.*[\(\)].*' \
+                --matchrule '<ISSUER>O=(U\.S\. Government|Entrust)<SUBJECT>CN=.*[\(\)].*' \
                 --maprule '(userCertificate;binary={cert})' \
-                --desc 'For PIV certificates WITH parentheses in the CN.  Zero is highest priority according to man sss-certmap.' \
+                --desc 'For PIV certificates WITH parentheses in the CN.  Entrust issuer covers DOE certificates used by INL contractors.  Zero is highest priority according to man sss-certmap.' \
                 --priority 0
 
             # We make use of user certmap data in order to match

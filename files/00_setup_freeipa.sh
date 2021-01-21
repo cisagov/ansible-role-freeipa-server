@@ -96,7 +96,8 @@ function setup {
             # Once the sssd pull request mentioned above is approved,
             # merged, and appears in a release, we should be able to
             # use a single certmap rule for all users that leverages
-            # the user certmap data.
+            # the user certmap data.  This has been documented in:
+            # https://github.com/cisagov/ansible-role-freeipa-server/issues/31
             #
             # For more details about FreeIPA, certmap rules, and
             # certmap data, see here:

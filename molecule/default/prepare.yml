@@ -1,9 +1,9 @@
 ---
 - name: Import upgrade playbook
-  import_playbook: upgrade.yml
+  ansible.builtin.import_playbook: upgrade.yml
 
 - name: Import python playbook
-  import_playbook: python.yml
+  ansible.builtin.import_playbook: python.yml
 
 # We want to copy a cron job to /etc/cron.daily, so that directory
 # needs to exist.  One way to make sure that it does is to go ahead
@@ -12,12 +12,12 @@
   hosts: all
   tasks:
     - name: Group hosts by OS distribution
-      group_by:
+      ansible.builtin.group_by:
         key: os_{{ ansible_facts['distribution'] }}
 - name: Install cronie (Fedora)
   hosts: os_Fedora
   tasks:
     - name: Install cronie (Fedora)
-      package:
+      ansible.builtin.package:
         name:
           - cronie

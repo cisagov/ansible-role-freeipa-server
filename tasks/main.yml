@@ -1,22 +1,22 @@
 ---
 - name: Install FreeIPA server
-  package:
+  ansible.builtin.package:
     name:
       - freeipa-server
     state: present
 
 - name: Install a daily cron job to disable inactive users
-  template:
+  ansible.builtin.template:
     src: disable_inactive_users.j2.sh
     dest: /etc/cron.daily/disable_inactive_users.sh
     mode: 0500
 
 - name: Copy DHS CA certs
-  get_url:
+  ansible.builtin.get_url:
     dest: /usr/local/share
     url: https://pki.treas.gov/dhsca_fullpath.p7b
 - name: Convert P7B to PEM
-  command:
+  ansible.builtin.command:
     cmd: >
       openssl pkcs7 -print_certs
       -in /usr/local/share/dhsca_fullpath.p7b
@@ -25,7 +25,7 @@
     creates: /usr/local/share/dhsca_fullpath.pem
 
 - name: Copy setup script
-  copy:
+  ansible.builtin.copy:
     src: 00_setup_freeipa.sh
     dest: /usr/local/sbin
     mode: 0500

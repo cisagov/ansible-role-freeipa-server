@@ -151,11 +151,25 @@ function setup {
     /var/kerberos/krb5kdc/kdc.conf
   systemctl restart krb5kdc.service
 
-  # Add a principal alias for the instance ID so folks can ssh in
-  # via SSM Session Manager.
-  ipa host-add-principal \
-    "$hostname" \
-    host/"$(curl --silent http://169.254.169.254/latest/meta-data/instance-id)"."$domain"
+  # Grab the instance ID from the AWS Instance Meta-Data Service
+  # (IMDSv2)
+  imds_token=$(curl --silent \
+      --request PUT \
+      --header "X-aws-ec2-metadata-token-ttl-seconds: 10" \
+    http://169.254.169.254/latest/api/token)
+  instance_id=$(curl --silent \
+      --header "X-aws-ec2-metadata-token: $imds_token" \
+    http://169.254.169.254/latest/meta-data/instance-id)
+  # Verify that the instance ID is valid
+  if [[ $instance_id =~ ^i-[0-9a-f]{17}$ ]]
+  then
+    # Add a principal alias for the instance ID so folks can ssh in
+    # via SSM Session Manager.
+    ipa host-add-principal "$hostname" host/"$instance_id"."$domain"
+  else
+    echo Invalid AWS instance ID "$instance_id" - not attempting to \
+      create principal alias for instance ID
+  fi
 
   # Enable features in the active authselect profile so that all necessary
   # hardened rules will be activated.

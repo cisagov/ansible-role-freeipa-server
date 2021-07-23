@@ -40,8 +40,7 @@ searchbase="cn=users,cn=accounts"
 # shellcheck disable=SC2154
 g="${domain}"
 # While g still contains a dot character...
-while grep --quiet --fixed-strings "." <<< "$g"
-do
+while grep --quiet --fixed-strings "." <<< "$g"; do
   # Extract the longest non-dot-containing string from the beginning
   # of $g
   tmp=$(expr "$g" : '\([^\.]*\)')
@@ -52,7 +51,7 @@ do
   # since otherwise it is confused by the braces and special
   # characters.
   # {% raw %}
-  g=${g:${#tmp} + 1}
+  g=${g:${#tmp}+1}
   # {% endraw %}
 done
 # There are no more dots in $g, so we just have to append the last bit
@@ -64,24 +63,23 @@ searchbase=$searchbase,dc=$g
 # ago, in a format that ldapsearch likes
 ###
 distant_past=$(date \
-    --date="$(date) -{{ days_before_inactive }} days" \
+  --date="$(date) -{{ days_before_inactive }} days" \
   +%Y%m%d%H%M%SZ)
 
 ###
 # Query LDAP to determine all users that are inactive
 ###
 users_to_disable=$(ldapsearch \
-    -b "$searchbase" \
-    "(krbLastSuccessfulAuth<=$distant_past)" \
-    uid \
-    2>/dev/null \
+  -b "$searchbase" \
+  "(krbLastSuccessfulAuth<=$distant_past)" \
+  uid \
+  2> /dev/null \
   | sed --quiet "/^uid: \(.*\)/{s//\1/p}")
 
 ###
 # Disable the users
 ###
-for user in $users_to_disable
-do
+for user in $users_to_disable; do
   # The ipa user-disable command may fail if the user is already
   # disabled, for example, but that's not really an error condition
   # for us.  If it fails for any other reason, the reason should be

@@ -41,8 +41,8 @@ function get_interface {
 
 # Get the IP address corresponding to an interface
 function get_ip {
-  ip --family inet address show dev "$1" | \
-    grep --perl-regexp --only-matching 'inet \K[\d.]+'
+  ip --family inet address show dev "$1" \
+    | grep --perl-regexp --only-matching 'inet \K[\d.]+'
 }
 
 # Install FreeIPA as a server or replica
@@ -154,15 +154,14 @@ function setup {
   # Grab the instance ID from the AWS Instance Meta-Data Service
   # (IMDSv2)
   imds_token=$(curl --silent \
-      --request PUT \
-      --header "X-aws-ec2-metadata-token-ttl-seconds: 10" \
+    --request PUT \
+    --header "X-aws-ec2-metadata-token-ttl-seconds: 10" \
     http://169.254.169.254/latest/api/token)
   instance_id=$(curl --silent \
-      --header "X-aws-ec2-metadata-token: $imds_token" \
+    --header "X-aws-ec2-metadata-token: $imds_token" \
     http://169.254.169.254/latest/meta-data/instance-id)
   # Verify that the instance ID is valid
-  if [[ $instance_id =~ ^i-[0-9a-f]{17}$ ]]
-  then
+  if [[ $instance_id =~ ^i-[0-9a-f]{17}$ ]]; then
     # Add a principal alias for the instance ID so folks can ssh in
     # via SSM Session Manager.
     ipa host-add-principal "$hostname" host/"$instance_id"."$domain"
@@ -183,9 +182,7 @@ function setup {
   authselect enable-feature with-smartcard
 }
 
-
-if [ $# -ne 1 ]
-then
+if [ $# -ne 1 ]; then
   echo "Installation type required: master | replica"
   exit 255
 fi

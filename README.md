@@ -13,10 +13,9 @@ None.
 
 ## Role Variables ##
 
-The variable `days_before_inactive` determines the number of days a
-user can go without logging in before his or her account is determined
-to be inactive and is disabled.  If not set, this variable takes on
-the default value of 45 days.
+| Variable | Description | Default | Required |
+|----------|-------------|---------|----------|
+| days_before_inactive | The number of days a user can go without logging in before his or her account is determined to be inactive and is disabled. | `45` | No |
 
 ## Dependencies ##
 

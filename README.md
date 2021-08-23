@@ -18,6 +18,13 @@ user can go without logging in before his or her account is determined
 to be inactive and is disabled.  If not set, this variable takes on
 the default value of 45 days.
 
+<!--
+| Variable | Description | Default | Required |
+|----------|-------------|---------|----------|
+| optional_variable | Describe its purpose. | `default_value` | No |
+| required_variable | Describe its purpose. | n/a | Yes |
+-->
+
 ## Dependencies ##
 
 None.

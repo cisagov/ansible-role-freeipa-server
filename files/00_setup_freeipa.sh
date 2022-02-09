@@ -10,6 +10,11 @@ set -o pipefail
 #
 # hostname: The hostname of this IPA server (e.g. ipa1.example.com).
 #
+# netbios_name: The NETBIOS name to be used by this IPA server
+# (e.g. EXAMPLE).  Note that NETBIOS names are restricted to at most
+# 15 characters.  These characters must consist only of uppercase
+# letters, numbers, and dashes.
+#
 # realm: The realm for the IPA server (e.g. EXAMPLE.COM).
 #
 #
@@ -18,6 +23,11 @@ set -o pipefail
 # domain: The domain for the IPA server (e.g. example.com).
 #
 # hostname: The hostname of this IPA server (e.g. ipa1.example.com).
+#
+# netbios_name: The NETBIOS name to be used by this IPA server
+# (e.g. EXAMPLE).  Note that NETBIOS names are restricted to at most
+# 15 characters.  These characters must consist only of uppercase
+# letters, numbers, and dashes.
 
 # Load above variables from a file installed by cloud-init:
 freeipa_vars_file=/var/lib/cloud/instance/freeipa-vars.sh
@@ -66,6 +76,7 @@ function setup {
         --domain="$domain" \
         --hostname="$hostname" \
         --ip-address="$ip_address" \
+        --netbios-name="$netbios_name" \
         --no-ntp \
         --no_hbac_allow \
         --mkhomedir
@@ -136,7 +147,9 @@ function setup {
       ipa-client-install --hostname="$hostname" \
         --mkhomedir \
         --no-ntp
-      ipa-replica-install --setup-ca \
+      ipa-replica-install \
+        --netbios-name="$netbios_name" \
+        --setup-ca \
         --setup-kra
       ;;
     *)

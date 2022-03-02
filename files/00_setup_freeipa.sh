@@ -8,10 +8,10 @@ set -o pipefail
 #
 # domain: The domain for the IPA server (e.g. example.com).
 #
-# hostname: The hostname of this IPA server (e.g. ipa1.example.com).
+# fqdn: The FQDN of this IPA server (e.g. ipa1.example.com).
 #
-# load_balancer_hostname: The hostname of the AWS load balancer in
-# front of this IPA server (e.g. ipa.example.com).
+# load_balancer_fqdn: The FQDN of the AWS load balancer in front of
+# this IPA server (e.g. ipa.example.com).
 #
 # netbios_name: The NETBIOS name to be used by this IPA server
 # (e.g. EXAMPLE).  Note that NETBIOS names are restricted to at most
@@ -25,10 +25,10 @@ set -o pipefail
 #
 # domain: The domain for the IPA server (e.g. example.com).
 #
-# hostname: The hostname of this IPA server (e.g. ipa1.example.com).
+# fqdn: The FQDN of this IPA server (e.g. ipa1.example.com).
 #
-# load_balancer_hostname: The hostname of the AWS load balancer in
-# front of this IPA server (e.g. ipa.example.com).
+# load_balancer_fqdn: The FQDN of the AWS load balancer in front of
+# this IPA server (e.g. ipa.example.com).
 #
 # netbios_name: The NETBIOS name to be used by this IPA server
 # (e.g. EXAMPLE).  Note that NETBIOS names are restricted to at most
@@ -66,20 +66,20 @@ function get_ip {
 }
 
 function modify_apache_config {
-  # FreeIPA insists that the Referer header match the hostname of
-  # the instance where the request is received.
+  # FreeIPA insists that the Referer header match the FQDN of the
+  # instance where the request is received.
   #
   # We don't want to expand the $1 at the end of the line, so we
   # intentionally enclose it in single quotes; hence, we can ignore
   # the SC2016 warning.
   #
-  # hostname and load_balancer_hostname are defined in the FreeIPA
-  # variables file that is sourced toward the top of this file.
-  # Hence we can ignore the "undefined variable" warnings coming
-  # from shellcheck (SC2154).
+  # fqdn and load_balancer_fqdn are defined in the FreeIPA variables
+  # file that is sourced toward the top of this file.  Hence we can
+  # ignore the "undefined variable" warnings coming from shellcheck
+  # (SC2154).
   #
   # shellcheck disable=SC2016,SC2154
-  printf '\nRequestHeader edit Referer ^https://%b/(.*) https://%b/$1\n' "${load_balancer_hostname//./\\.}" "$hostname" >> $apache_config_file
+  printf '\nRequestHeader edit Referer ^https://%b/(.*) https://%b/$1\n' "${load_balancer_fqdn//./\\.}" "$fqdn" >> $apache_config_file
 
   # Change all 301 HTTP status codes to 308, so that methods other
   # than GET and HEAD are left unaltered.  See these links for more
@@ -102,7 +102,7 @@ function setup {
 
       # Install the master
       #
-      # realm, domain, and hostname are defined in the FreeIPA
+      # realm, domain, and fqdn are defined in the FreeIPA
       # variables file that is sourced toward the top of this
       # file.  Hence we can ignore the "undefined variable"
       # warnings from shellcheck.
@@ -111,7 +111,7 @@ function setup {
       ipa-server-install --setup-kra \
         --realm="$realm" \
         --domain="$domain" \
-        --hostname="$hostname" \
+        --hostname="$fqdn" \
         --ip-address="$ip_address" \
         --netbios-name="$netbios_name" \
         --no-ntp \
@@ -176,12 +176,12 @@ function setup {
       # pass the principal to ipa-client-install, so we first
       # run ipa-client-install manually.
       #
-      # hostname is defined in the FreeIPA variables file that
+      # fqdn is defined in the FreeIPA variables file that
       # is sourced toward the top of this file.  Hence we can
       # ignore the "undefined variable" warning from shellcheck.
       #
       # shellcheck disable=SC2154
-      ipa-client-install --hostname="$hostname" \
+      ipa-client-install --hostname="$fqdn" \
         --mkhomedir \
         --no-ntp
       ipa-replica-install \
@@ -214,7 +214,7 @@ function setup {
   if [[ $instance_id =~ ^i-[0-9a-f]{17}$ ]]; then
     # Add a principal alias for the instance ID so folks can ssh in
     # via SSM Session Manager.
-    ipa host-add-principal "$hostname" host/"$instance_id"."$domain"
+    ipa host-add-principal "$fqdn" host/"$instance_id"."$domain"
   else
     echo Invalid AWS instance ID "$instance_id" - not attempting to \
       create principal alias for instance ID
@@ -231,7 +231,7 @@ function setup {
   authselect enable-feature with-fingerprint
   authselect enable-feature with-smartcard
 
-  # Tweak the Apache configuration to cirrectly handle being placed
+  # Tweak the Apache configuration to correctly handle being placed
   # behind a load balancer.
   modify_apache_config
 }

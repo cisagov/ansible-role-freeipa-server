@@ -10,6 +10,9 @@ set -o pipefail
 #
 # hostname: The hostname of this IPA server (e.g. ipa1.example.com).
 #
+# load_balancer_hostname: The hostname of the AWS load balancer in
+# front of this IPA server (e.g. ipa.example.com).
+#
 # netbios_name: The NETBIOS name to be used by this IPA server
 # (e.g. EXAMPLE).  Note that NETBIOS names are restricted to at most
 # 15 characters.  These characters must consist only of uppercase
@@ -24,6 +27,9 @@ set -o pipefail
 #
 # hostname: The hostname of this IPA server (e.g. ipa1.example.com).
 #
+# load_balancer_hostname: The hostname of the AWS load balancer in
+# front of this IPA server (e.g. ipa.example.com).
+#
 # netbios_name: The NETBIOS name to be used by this IPA server
 # (e.g. EXAMPLE).  Note that NETBIOS names are restricted to at most
 # 15 characters.  These characters must consist only of uppercase
@@ -31,6 +37,10 @@ set -o pipefail
 
 # Load above variables from a file installed by cloud-init:
 freeipa_vars_file=/var/lib/cloud/instance/freeipa-vars.sh
+
+# This file contains the part of the FreeIPA Apache configuration that
+# we want to modify.
+apache_config_file=/etc/httpd/conf.d/ipa-rewrite.conf
 
 if [[ -f "$freeipa_vars_file" ]]; then
   # Disable this warning since the file is only available at runtime
@@ -53,6 +63,33 @@ function get_interface {
 function get_ip {
   ip --family inet address show dev "$1" \
     | grep --perl-regexp --only-matching 'inet \K[\d.]+'
+}
+
+function modify_apache_config {
+  # FreeIPA insists that the Referer header match the hostname of
+  # the instance where the request is received.
+  #
+  # We don't want to expand the $1 at the end of the line, so we
+  # intentionally enclose it in single quotes; hence, we can ignore
+  # the SC2016 warning.
+  #
+  # hostname and load_balancer_hostname are defined in the FreeIPA
+  # variables file that is sourced toward the top of this file.
+  # Hence we can ignore the "undefined variable" warnings coming
+  # from shellcheck (SC2154).
+  #
+  # shellcheck disable=SC2016,SC2154
+  printf '\nRequestHeader edit Referer ^https://%b/(.*) https://%b/$1\n' "${load_balancer_hostname//./\\.}" "$hostname" >> $apache_config_file
+
+  # Change all 301 HTTP status codes to 308, so that methods other
+  # than GET and HEAD are left unaltered.  See these links for more
+  # details about 301 and 308 status codes:
+  # * https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/301
+  # * https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/308
+  sed --in-place "s/R=301/R=308/g" $apache_config_file
+
+  # Restart Apache so the changes take effect.
+  systemctl restart httpd.service
 }
 
 # Install FreeIPA as a server or replica
@@ -193,6 +230,10 @@ function setup {
   authselect enable-feature with-faillock
   authselect enable-feature with-fingerprint
   authselect enable-feature with-smartcard
+
+  # Tweak the Apache configuration to cirrectly handle being placed
+  # behind a load balancer.
+  modify_apache_config
 }
 
 if [ $# -ne 1 ]; then

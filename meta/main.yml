@@ -16,9 +16,8 @@ galaxy_info:
   platforms:
     - name: Fedora
       versions:
-        - 32
-        - 33
         - 34
+        - 35
   role_name: freeipa
 
 dependencies: []

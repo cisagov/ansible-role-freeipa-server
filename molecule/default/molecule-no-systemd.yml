@@ -16,12 +16,10 @@ lint: |
   ansible-lint
   flake8
 platforms:
-  - name: fedora32
-    image: fedora:32
-  - name: fedora33
-    image: fedora:33
   - name: fedora34
     image: fedora:34
+  - name: fedora35
+    image: fedora:35
 provisioner:
   name: ansible
   inventory:

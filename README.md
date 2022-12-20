@@ -1,8 +1,7 @@
 # ansible-role-freeipa-server #
 
 [![GitHub Build Status](https://github.com/cisagov/ansible-role-freeipa-server/workflows/build/badge.svg)](https://github.com/cisagov/ansible-role-freeipa-server/actions)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/cisagov/ansible-role-freeipa-server.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/ansible-role-freeipa-server/alerts/)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/cisagov/ansible-role-freeipa-server.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/ansible-role-freeipa-server/context:python)
+[![CodeQL](https://github.com/cisagov/ansible-role-freeipa-server/workflows/CodeQL/badge.svg)](https://github.com/cisagov/ansible-role-freeipa-server/actions/workflows/codeql-analysis.yml)
 
 This is an Ansible role for installing
 [FreeIPA](https://www.freeipa.org) server.
@@ -29,8 +28,10 @@ Here's how to use it in a playbook:
 - hosts: freeipa_servers
   become: yes
   become_method: sudo
-  roles:
-    - freeipa_server
+  tasks:
+    - name: Install FreeIPA server
+      ansible.builtin.include_role:
+        name: freeipa_server
 ```
 
 ## Contributing ##

@@ -1,8 +1,9 @@
 ---
+dependencies: []
 galaxy_info:
   author: Shane Frasier
-  description: Install FreeIPA server.
   company: CISA Cyber Assessments
+  description: Install FreeIPA server.
   galaxy_tags:
     - freeipa
   license: CC0
@@ -16,9 +17,6 @@ galaxy_info:
   platforms:
     - name: Fedora
       versions:
-        - "35"
         - "36"
         - "37"
   role_name: freeipa
-
-dependencies: []

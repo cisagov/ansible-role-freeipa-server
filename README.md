@@ -14,7 +14,7 @@ None.
 
 | Variable | Description | Default | Required |
 |----------|-------------|---------|----------|
-| days_before_inactive | The number of days a user can go without logging in before his or her account is determined to be inactive and is disabled. | `45` | No |
+| freeipa_days_before_inactive | The number of days a user can go without logging in before his or her account is determined to be inactive and is disabled. | `45` | No |
 
 ## Dependencies ##
 

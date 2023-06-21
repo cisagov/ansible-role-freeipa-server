@@ -63,7 +63,7 @@ searchbase=$searchbase,dc=$g
 # ago, in a format that ldapsearch likes
 ###
 distant_past=$(date \
-  --date="$(date) -{{ days_before_inactive }} days" \
+  --date="$(date) -{{ freeipa_days_before_inactive }} days" \
   +%Y%m%d%H%M%SZ)
 
 ###

@@ -10,17 +10,15 @@ dependency:
   name: galaxy
 driver:
   name: docker
-lint: |
-  set -e
-  yamllint .
-  ansible-lint
-  flake8
 platforms:
-  - image: fedora:36
-    name: fedora36
-    platform: amd64
+  # FreeIPA server is only available for the RedHat, Fedora, and
+  # CentOS Linux distributions.  Among these distributions we only
+  # support Fedora.
   - image: fedora:37
     name: fedora37
+    platform: amd64
+  - image: fedora:38
+    name: fedora38
     platform: amd64
 scenario:
   name: default

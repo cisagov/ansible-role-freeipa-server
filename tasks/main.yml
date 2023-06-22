@@ -15,6 +15,7 @@
 - name: Copy DHS CA certs
   ansible.builtin.get_url:
     dest: /usr/local/share
+    mode: 0600
     url: https://pki.treas.gov/dhsca_fullpath.p7b
 - name: Convert P7B to PEM
   ansible.builtin.command:

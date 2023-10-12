@@ -26,7 +26,7 @@ Here's how to use it in a playbook:
 
 ```yaml
 - hosts: freeipa_servers
-  become: yes
+  become: true
   become_method: sudo
   tasks:
     - name: Install FreeIPA server

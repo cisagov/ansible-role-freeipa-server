@@ -149,6 +149,8 @@ jobs:
       matrix:
         scenario:
           - default
+          - disable_trace
+          - enable_hsts
     steps:
       - id: harden-runner
         name: Harden the runner

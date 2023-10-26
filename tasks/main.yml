@@ -4,7 +4,6 @@
     name:
       - freeipa-healthcheck
       - freeipa-server
-    state: present
 
 - name: Install a daily cron job to disable inactive users
   ansible.builtin.template:

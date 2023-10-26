@@ -7,9 +7,9 @@
 
 - name: Install a daily cron job to disable inactive users
   ansible.builtin.template:
-    src: disable_inactive_users.j2.sh
     dest: /etc/cron.daily/disable_inactive_users.sh
     mode: 0500
+    src: disable_inactive_users.j2.sh
 
 - name: Copy DHS CA certs
   ansible.builtin.get_url:
@@ -27,6 +27,6 @@
 
 - name: Copy setup script
   ansible.builtin.copy:
-    src: 00_setup_freeipa.sh
     dest: /usr/local/sbin
     mode: 0500
+    src: 00_setup_freeipa.sh

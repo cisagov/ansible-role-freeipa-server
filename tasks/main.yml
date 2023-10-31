@@ -4,13 +4,28 @@
     name:
       - freeipa-healthcheck
       - freeipa-server
-    state: present
+
+- name: Install Apache config fragment to disable trace functionality
+  ansible.builtin.copy:
+    dest: /etc/httpd/conf.d
+    mode: 0500
+    src: disable_trace.conf
+  when:
+    - freeipa_disable_trace
+
+- name: Install Apache config fragment to enable HSTS functionality
+  ansible.builtin.copy:
+    dest: /etc/httpd/conf.d
+    mode: 0500
+    src: enable_hsts.conf
+  when:
+    - freeipa_enable_hsts
 
 - name: Install a daily cron job to disable inactive users
   ansible.builtin.template:
-    src: disable_inactive_users.j2.sh
     dest: /etc/cron.daily/disable_inactive_users.sh
     mode: 0500
+    src: disable_inactive_users.j2.sh
 
 - name: Copy DHS CA certs
   ansible.builtin.get_url:
@@ -28,6 +43,6 @@
 
 - name: Copy setup script
   ansible.builtin.copy:
-    src: 00_setup_freeipa.sh
     dest: /usr/local/sbin
     mode: 0500
+    src: 00_setup_freeipa.sh

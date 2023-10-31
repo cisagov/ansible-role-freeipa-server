@@ -32,6 +32,6 @@ platforms:
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
 scenario:
-  name: default
+  name: disable_trace
 verifier:
   name: testinfra

@@ -20,12 +20,35 @@ galaxy_info:
   min_ansible_version: "2.10"
   namespace: cisagov
   platforms:
+<<<<<<< HEAD
     # FreeIPA server is only available for the RedHat, Fedora, and
     # CentOS Linux distributions.  Among these distributions we only
     # support Fedora.
+=======
+    - name: Amazon Linux
+      versions:
+        - "2023"
+    - name: Debian
+      versions:
+        - buster
+        - bullseye
+        - bookworm
+        - trixie
+>>>>>>> c121f6c2d751ea234695e5ff5188c9a834537efd
     - name: Fedora
       versions:
-        - "37"
         - "38"
+<<<<<<< HEAD
   role_name: freeipa
+=======
+        - "39"
+    - name: Kali
+      versions:
+        - "2023"
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+  role_name: skeleton
+>>>>>>> c121f6c2d751ea234695e5ff5188c9a834537efd
   standalone: true

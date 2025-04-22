@@ -10,7 +10,7 @@
     - name: Copy DHS CA certs
       ansible.builtin.get_url:
         dest: /usr/local/share
-        mode: 0600
+        mode: u=rw,g=,o=
         url: https://pki.treas.gov/dhsca_fullpath.p7b
     - name: Convert P7B to PEM
       ansible.builtin.command:
@@ -24,7 +24,7 @@
 - name: Copy setup script
   ansible.builtin.copy:
     dest: /usr/local/sbin
-    mode: 0500
+    mode: u=rx,g=,o=
     src: 00_setup_freeipa.sh
 
 - name: >-
@@ -36,17 +36,17 @@
     - name: Copy inactive user setup script
       ansible.builtin.copy:
         dest: /usr/local/sbin
-        mode: 0500
+        mode: u=rx,g=,o=
         src: 01_setup_disabling_of_inactive_freeipa_users.sh
     - name: Copy shell script to disable inactive users
       ansible.builtin.copy:
         dest: /usr/local/sbin
-        mode: 0500
+        mode: u=rx,g=,o=
         src: disable_inactive_freeipa_users.sh
     - name: Copy systemd service to disable inactive users
       ansible.builtin.template:
         dest: /etc/systemd/system/disable-inactive-freeipa-users.service
-        mode: 0400
+        mode: u=r,g=,o=
         src: disable-inactive-freeipa-users.j2.service
         # I'd like to validate the file here, but that can't be done
         # cleanly.  See ansible/ansible#19243.
@@ -54,7 +54,7 @@
     - name: Copy systemd timer to disable inactive users daily
       ansible.builtin.copy:
         dest: /etc/systemd/system
-        mode: 0400
+        mode: u=r,g=,o=
         src: disable-inactive-freeipa-users.timer
         # I'd like to validate the file here, but that can't be done
         # cleanly.  See ansible/ansible#19243.
@@ -63,7 +63,7 @@
 - name: Install Apache config fragment to disable trace functionality
   ansible.builtin.copy:
     dest: /etc/httpd/conf.d
-    mode: 0500
+    mode: u=rx,g=,o=
     src: disable_trace.conf
   when:
     - freeipa_disable_trace
@@ -71,7 +71,7 @@
 - name: Install Apache config fragment to enable HSTS functionality
   ansible.builtin.copy:
     dest: /etc/httpd/conf.d
-    mode: 0500
+    mode: u=rx,g=,o=
     src: enable_hsts.conf
   when:
     - freeipa_enable_hsts

@@ -15,7 +15,7 @@ function setup {
   # bash array (-a).  We also include the -r option to avoid mangling
   # backslashes.  The read bash builtin does not support long command
   # line options.
-  IFS=',' read -a -r password_plugin_features <<< "$(ipa config-show \
+  IFS=',' read -a password_plugin_features -r <<< "$(ipa config-show \
     |
     # --quiet means no printing unless the p command is used
     sed --quiet "s/, /,/;s/^\s*Password plugin features:\s*\(.*\)/\1/p")"

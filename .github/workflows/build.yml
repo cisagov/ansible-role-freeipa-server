@@ -219,9 +219,8 @@ jobs:
           # FreeIPA server is only available for the RedHat, Fedora, and
           # CentOS Linux distributions.  Among these distributions we only
           # support Fedora.
-          - fedora39-systemd
-          - fedora40-systemd
           - fedora41-systemd
+          - fedora42-systemd
         scenario:
           - default
           - disable_inactive_users

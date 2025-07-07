@@ -73,9 +73,11 @@ function enable_systemd_timer {
   systemctl enable --now disable-inactive-freeipa-users.timer
 }
 
-if [ $# -ne 0 ]; then
-  echo This command takes no options.
+if [ $# -eq 0 ]; then
+  setup
+elif [ $# -eq 1 ]; then
+  $1
+else
+  echo This command takes zero or one argument.
   exit 255
 fi
-
-setup

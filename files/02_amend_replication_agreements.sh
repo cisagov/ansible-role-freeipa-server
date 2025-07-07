@@ -22,14 +22,19 @@ function enable_last_successful_auth_replication {
       # modify it.
       cmd_output=$(ipa topologysegment-find "$suffix" --all \
         --name="$segment" --raw)
+      echo "$cmd_output"
       old_repl_attr=$(sed --quiet \
         "s/^[[:blank:]]*nsDS5ReplicatedAttributeList:[[:blank:]]*\(.*\)$/\1/p" \
         <<< "$cmd_output")
+      echo "$old_repl_attr"
       new_repl_attr=${old_repl_attr//krblastsuccessfulauth/}
+      echo "$new_repl_attr"
       old_repl_attr_total=$(sed --quiet \
         "s/^[[:blank:]]*nsDS5ReplicatedAttributeListTotal:[[:blank:]]*\(.*\)$/\1/p" \
         <<< "$cmd_output")
+      echo "$old_repl_attr_total"
       new_repl_attr_total=${old_repl_attr_total//krblastsuccessfulauth/}
+      echo "$new_repl_attr_total"
 
       # Update the topology segment so that krblastsuccessfulauth is
       # removed from the list of replication exclusions.
@@ -38,7 +43,7 @@ function enable_last_successful_auth_replication {
       # nothing; however, we must temporarily turn off the bash option
       # errexit since in that case the error code indicates a failure.
       set +o errexit
-      ipa topologysegment-mod "$suffix" "$segment" \
+      echo ipa topologysegment-mod "$suffix" "$segment" \
         --replattrs="$new_repl_attr" --replattrstotal="$new_repl_attr_total"
       set +o errexit
     done

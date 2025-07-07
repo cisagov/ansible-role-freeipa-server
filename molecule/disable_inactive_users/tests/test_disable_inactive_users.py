@@ -18,6 +18,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
         "/etc/systemd/system/disable-inactive-freeipa-users.service",
         "/etc/systemd/system/disable-inactive-freeipa-users.timer",
         "/usr/local/sbin/01_setup_disabling_of_inactive_freeipa_users.sh",
+        "/usr/local/sbin/02_amend_replication_agreements.sh",
         "/usr/local/sbin/disable_inactive_freeipa_users.sh",
     ],
 )

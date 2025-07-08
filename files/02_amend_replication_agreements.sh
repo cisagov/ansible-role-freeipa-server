@@ -25,11 +25,11 @@ function enable_last_successful_auth_replication {
       old_repl_attr=$(sed --quiet \
         "s/^[[:blank:]]*nsDS5ReplicatedAttributeList:[[:blank:]]*\(.*\)$/\1/p" \
         <<< "$cmd_output")
-      new_repl_attr=${old_repl_attr//krblastsuccessfulauth/}
+      new_repl_attr=${old_repl_attr// krblastsuccessfulauth/}
       old_repl_attr_total=$(sed --quiet \
         "s/^[[:blank:]]*nsDS5ReplicatedAttributeListTotal:[[:blank:]]*\(.*\)$/\1/p" \
         <<< "$cmd_output")
-      new_repl_attr_total=${old_repl_attr_total//krblastsuccessfulauth/}
+      new_repl_attr_total=${old_repl_attr_total// krblastsuccessfulauth/}
 
       # Update the topology segment so that krblastsuccessfulauth is
       # removed from the list of replication exclusions.

@@ -4,7 +4,7 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-TOPOLOGY_SUFFIXES=domain ca
+TOPOLOGY_SUFFIXES="domain ca"
 
 # Enable replication of the krblastsuccessfulauth timestamps.  By
 # default these timestamps *are not* replicated between servers to

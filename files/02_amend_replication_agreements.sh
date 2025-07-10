@@ -54,10 +54,30 @@ function enable_last_successful_auth_replication {
   done
 }
 
-# Add any missing replication agreements and set up this instance to
-# disable inactive FreeIPA users.
+# Re-initialize this replica.  This should be run after the topology
+# segments are altered by the enable_last_successful_auth_replication
+# function.
+function reinitialize_replica {
+  suffixes_as_array=("$TOPOLOGY_SUFFIXES")
+  # The suffix just needs to be valid, since every topology suffix
+  # with the same name but a different topology suffix is identical.
+  first_suffix=${suffixes_as_array[0]}
+  my_hostname=$(hostnamectl status --static)
+  # Note that we only print the first segment name that is a match
+  # since any match will work.
+  segment_name=$(ipa topologysegment-find "$first_suffix" --pkey-only \
+    --rightnode="$my_hostname" \
+    | sed --quiet "s/^[[:blank:]]*Segment name:[[:blank:]]*\(.*\)$/\1/1p")
+  other_hostname=$(sed --quiet "s/^\(.*\)-to-$my_hostname$/\1/p" \
+    <<< "$segment_name")
+  ipa-replica-manage re-initialize --from-"$other_hostname"
+}
+
+# Enable replication of the krblastsuccessfulauth timestamps on all
+# existing topology segments and then reinitialize this replica.
 function setup {
   enable_last_successful_auth_replication
+  reinitialize_replica
 }
 
 if [ $# -eq 0 ]; then

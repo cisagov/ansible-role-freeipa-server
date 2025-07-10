@@ -4,13 +4,6 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-# Set up this instance to disable inactive FreeIPA users.
-function setup {
-  disable_password_plugin_feature
-  create_role_and_privilege
-  enable_systemd_timer
-}
-
 # Disable the "KDC:Disable Last Success" password plugin feature.  We
 # don't want this feature enabled because we want to be able to
 # disable inactive users, which requires us to be able to determine
@@ -71,6 +64,13 @@ function create_role_and_privilege {
 function enable_systemd_timer {
   systemctl daemon-reload
   systemctl enable --now disable-inactive-freeipa-users.timer
+}
+
+# Set up this instance to disable inactive FreeIPA users.
+function setup {
+  disable_password_plugin_feature
+  create_role_and_privilege
+  enable_systemd_timer
 }
 
 if [ $# -eq 0 ]; then

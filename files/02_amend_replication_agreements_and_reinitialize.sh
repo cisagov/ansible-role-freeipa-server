@@ -71,9 +71,13 @@ function reinitialize_replica {
   my_hostname=$(hostnamectl status --static)
   # Note that we only print the first segment name that is a match
   # since any match will work.
+  #
+  # The T means "jump if no substitution took place" which means that
+  # the p and q commands will ONLY run if a substitution took place;
+  # otherwise, we proceed to the next line.
   segment_name=$(ipa topologysegment-find "$first_suffix" --pkey-only \
     --rightnode="$my_hostname" \
-    | sed --quiet "s/^[[:blank:]]*Segment name:[[:blank:]]*\(.*\)$/\1/1p")
+    | sed --quiet "s/^[[:blank:]]*Segment name:[[:blank:]]*\(.*\)$/\1/; T; p; q")
   other_hostname=$(sed --quiet "s/^\(.*\)-to-$my_hostname$/\1/p" \
     <<< "$segment_name")
   ipa-replica-manage re-initialize --from="$other_hostname"

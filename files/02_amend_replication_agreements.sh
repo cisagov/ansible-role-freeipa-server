@@ -6,11 +6,11 @@ set -o pipefail
 
 TOPOLOGY_SUFFIXES="domain ca"
 
-# Enable replication of the krblastsuccessfulauth timestamps.  By
-# default these timestamps *are not* replicated between servers to
-# avoid a replication storm, but given our limited number of users we
-# should be OK.  See here for more details:
-# https://pagure.io/freeipa/issue/9821
+# Enable replication of the krblastsuccessfulauth timestamps on all
+# existing topology segments.  By default these timestamps *are not*
+# replicated between servers to avoid a replication storm, but given
+# our limited number of users we should be OK.  See here for more
+# details: https://pagure.io/freeipa/issue/9821
 function enable_last_successful_auth_replication {
   for suffix in $TOPOLOGY_SUFFIXES; do
     # Get all the topology segments for the given topology suffix.  We

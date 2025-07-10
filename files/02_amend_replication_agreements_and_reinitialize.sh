@@ -70,7 +70,7 @@ function reinitialize_replica {
     | sed --quiet "s/^[[:blank:]]*Segment name:[[:blank:]]*\(.*\)$/\1/1p")
   other_hostname=$(sed --quiet "s/^\(.*\)-to-$my_hostname$/\1/p" \
     <<< "$segment_name")
-  ipa-replica-manage re-initialize --from-"$other_hostname"
+  ipa-replica-manage re-initialize --from="$other_hostname"
 }
 
 # Enable replication of the krblastsuccessfulauth timestamps on all

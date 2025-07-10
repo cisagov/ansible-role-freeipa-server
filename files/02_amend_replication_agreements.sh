@@ -54,9 +54,17 @@ function enable_last_successful_auth_replication {
   done
 }
 
-if [ $# -ne 0 ]; then
-  echo This command takes no options.
+# Add any missing replication agreements and set up this instance to
+# disable inactive FreeIPA users.
+function setup {
+  enable_last_successful_auth_replication
+}
+
+if [ $# -eq 0 ]; then
+  setup
+elif [ $# -eq 1 ]; then
+  $1
+else
+  echo This command takes zero or one argument.
   exit 255
 fi
-
-enable_last_successful_auth_replication

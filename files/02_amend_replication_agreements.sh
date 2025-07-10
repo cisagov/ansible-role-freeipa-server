@@ -49,7 +49,7 @@ function enable_last_successful_auth_replication {
       set +o errexit
       ipa topologysegment-mod "$suffix" "$segment" \
         --replattrs="$new_repl_attr" --replattrstotal="$new_repl_attr_total"
-      set +o errexit
+      set -o errexit
     done
   done
 }

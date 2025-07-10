@@ -58,7 +58,12 @@ function enable_last_successful_auth_replication {
 # segments are altered by the enable_last_successful_auth_replication
 # function.
 function reinitialize_replica {
-  suffixes_as_array=("$TOPOLOGY_SUFFIXES")
+  suffixes_as_array=()
+  # Note that we read in the variable TOPOLOGY_SUFFIXES as a bash
+  # array (-a).  We also include the -r option to avoid mangling
+  # backslashes.  The read bash builtin does not support long command
+  # line options.
+  IFS=' ' read -a suffixes_as_array -d -r <<< "$TOPOLOGY_SUFFIXES"
   # The suffix just needs to be valid, since every topology suffix
   # with the same name but a different topology suffix is identical.
   first_suffix=${suffixes_as_array[0]}

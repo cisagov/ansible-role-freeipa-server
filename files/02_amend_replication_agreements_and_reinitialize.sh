@@ -65,7 +65,8 @@ function reinitialize_replica {
   # line options.
   IFS=' ' read -a suffixes_as_array -d -r <<< "$TOPOLOGY_SUFFIXES"
   # The suffix just needs to be valid, since every topology suffix
-  # with the same name but a different topology suffix is identical.
+  # with the same name but a different topology suffix should be
+  # otherwise identical.
   first_suffix=${suffixes_as_array[0]}
   my_hostname=$(hostnamectl status --static)
   # Note that we only print the first segment name that is a match

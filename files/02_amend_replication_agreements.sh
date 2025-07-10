@@ -22,17 +22,26 @@ function enable_last_successful_auth_replication {
       # modify it.
       cmd_output=$(ipa topologysegment-find "$suffix" --all \
         --name="$segment" --raw)
+      # Extract the part where the fractional replication attributes
+      # are specified
       old_repl_attr=$(sed --quiet \
         "s/^[[:blank:]]*nsDS5ReplicatedAttributeList:[[:blank:]]*\(.*\)$/\1/p" \
         <<< "$cmd_output")
+      # Remove krblastsuccessfulauth from the list of excluded
+      # fractional replication attributes
       new_repl_attr=${old_repl_attr// krblastsuccessfulauth/}
+      # Extract the part where the total replication attributes are
+      # specified
       old_repl_attr_total=$(sed --quiet \
         "s/^[[:blank:]]*nsDS5ReplicatedAttributeListTotal:[[:blank:]]*\(.*\)$/\1/p" \
         <<< "$cmd_output")
+      # Remove krblastsuccessfulauth from the list of excluded total
+      # replication attributes
       new_repl_attr_total=${old_repl_attr_total// krblastsuccessfulauth/}
 
       # Update the topology segment so that krblastsuccessfulauth is
-      # removed from the list of replication exclusions.
+      # removed from the lists of fractional and total replication
+      # exclusions.
       #
       # Note that it is harmless to run this command when it changes
       # nothing; however, we must temporarily turn off the bash option

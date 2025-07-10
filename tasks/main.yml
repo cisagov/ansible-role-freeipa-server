@@ -40,7 +40,7 @@
         src: "{{ item }}"
       loop:
         - 01_setup_disabling_of_inactive_freeipa_users.sh
-        - 02_amend_replication_agreements.sh
+        - 02_amend_replication_agreements_and_reinitialize.sh
     - name: Copy shell script to disable inactive users
       ansible.builtin.copy:
         dest: /usr/local/sbin

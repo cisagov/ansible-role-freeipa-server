@@ -57,13 +57,19 @@ function enable_last_successful_auth_replication {
 
 # Re-initialize this replica.  This should be run after the topology
 # segments are altered by the enable_last_successful_auth_replication
-# function.
+# function so that data is immediately synchronized.
 function reinitialize_replica {
   # The suffix just needs to be valid, since every topology suffix
   # with the same name but a different topology suffix should be
   # otherwise identical.
   first_suffix="${TOPOLOGY_SUFFIXES[0]}"
   my_hostname=$(hostnamectl status --static)
+
+  # Find a topology segment between the server where this script is
+  # being run and the server against which we created the replica.
+  # From the name of that segment extract the hostname of the server
+  # against which we created the replica.
+  #
   # Note that we only print the first segment name that is a match
   # since any match will work.
   #
@@ -84,14 +90,15 @@ function reinitialize_replica {
     other_hostname=$(sed --quiet "s/^\(.*\)-to-$my_hostname$/\1/p" \
       <<< "$segment_name")
   else
-    # No match, so the topology segment name must be the other way
-    # around.
+    # There was no match, so the topology segment name must be the
+    # other way around.
     segment_name=$(ipa topologysegment-find "$first_suffix" --pkey-only \
       --leftnode="$my_hostname" \
       | sed --quiet "s/^[[:blank:]]*Segment name:[[:blank:]]*\(.*\)$/\1/; T; p; q")
     other_hostname=$(sed --quiet "s/^$my_hostname-to-\(.*\)$/\1/p" \
       <<< "$segment_name")
   fi
+
   ipa-replica-manage re-initialize --from="$other_hostname"
 }
 

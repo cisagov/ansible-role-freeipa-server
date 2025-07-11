@@ -63,7 +63,7 @@ function reinitialize_replica {
   # array (-a).  We also include the -r option to avoid mangling
   # backslashes.  The read bash builtin does not support long command
   # line options.
-  IFS=' ' read -a suffixes_as_array -d -r <<< "$TOPOLOGY_SUFFIXES"
+  IFS=' ' read -a suffixes_as_array -r <<< "$TOPOLOGY_SUFFIXES"
   # The suffix just needs to be valid, since every topology suffix
   # with the same name but a different topology suffix should be
   # otherwise identical.

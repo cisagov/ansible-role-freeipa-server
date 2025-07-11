@@ -67,12 +67,19 @@ function reinitialize_replica {
   # Note that we only print the first segment name that is a match
   # since any match will work.
   #
-  # The T means "jump if no substitution took place" which means that
-  # the p and q commands will ONLY run if a substitution took place;
-  # otherwise, we proceed to the next line.
+  # The T in the sed command means "jump if no substitution took
+  # place" which means that the p and q commands will ONLY run if a
+  # substitution took place; otherwise, we proceed to the next line.
+  #
+  # This command may fail if the topology segment we're looking for is
+  # the other way around, i.e., if the server where we're running this
+  # script is the left node in the topology segment.  In that case
+  # segment_name will be empty and we will run a different command
+  set +o errexit
   segment_name=$(ipa topologysegment-find "$first_suffix" --pkey-only \
     --rightnode="$my_hostname" \
     | sed --quiet "s/^[[:blank:]]*Segment name:[[:blank:]]*\(.*\)$/\1/; T; p; q")
+  set +o errexit
   if [ -n "$segment_name" ]; then
     other_hostname=$(sed --quiet "s/^\(.*\)-to-$my_hostname$/\1/p" \
       <<< "$segment_name")

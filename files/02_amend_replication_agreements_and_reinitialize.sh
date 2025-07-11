@@ -4,7 +4,8 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-TOPOLOGY_SUFFIXES="domain ca"
+# An array of valid topology suffixes
+declare -a TOPOLOGY_SUFFIXES=("domain" "ca")
 
 # Enable replication of the krblastsuccessfulauth timestamps on all
 # existing topology segments.  By default these timestamps *are not*
@@ -12,7 +13,7 @@ TOPOLOGY_SUFFIXES="domain ca"
 # our limited number of users we should be OK.  See here for more
 # details: https://pagure.io/freeipa/issue/9821
 function enable_last_successful_auth_replication {
-  for suffix in $TOPOLOGY_SUFFIXES; do
+  for suffix in "${TOPOLOGY_SUFFIXES[@]}"; do
     # Get all the topology segments for the given topology suffix.  We
     # will need to update each one.
     topology_segments=$(ipa topologysegment-find "$suffix" --pkey-only \
@@ -58,16 +59,10 @@ function enable_last_successful_auth_replication {
 # segments are altered by the enable_last_successful_auth_replication
 # function.
 function reinitialize_replica {
-  suffixes_as_array=()
-  # Note that we read in the variable TOPOLOGY_SUFFIXES as a bash
-  # array (-a).  We also include the -r option to avoid mangling
-  # backslashes.  The read bash builtin does not support long command
-  # line options.
-  IFS=' ' read -a suffixes_as_array -r <<< "$TOPOLOGY_SUFFIXES"
   # The suffix just needs to be valid, since every topology suffix
   # with the same name but a different topology suffix should be
   # otherwise identical.
-  first_suffix=${suffixes_as_array[0]}
+  first_suffix="${TOPOLOGY_SUFFIXES[0]}"
   my_hostname=$(hostnamectl status --static)
   # Note that we only print the first segment name that is a match
   # since any match will work.

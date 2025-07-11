@@ -78,8 +78,18 @@ function reinitialize_replica {
   segment_name=$(ipa topologysegment-find "$first_suffix" --pkey-only \
     --rightnode="$my_hostname" \
     | sed --quiet "s/^[[:blank:]]*Segment name:[[:blank:]]*\(.*\)$/\1/; T; p; q")
-  other_hostname=$(sed --quiet "s/^\(.*\)-to-$my_hostname$/\1/p" \
-    <<< "$segment_name")
+  if [ -n "$segment_name" ]; then
+    other_hostname=$(sed --quiet "s/^\(.*\)-to-$my_hostname$/\1/p" \
+      <<< "$segment_name")
+  else
+    # No match, so the topology segment name must be the other way
+    # around.
+    segment_name=$(ipa topologysegment-find "$first_suffix" --pkey-only \
+      --leftnode="$my_hostname" \
+      | sed --quiet "s/^[[:blank:]]*Segment name:[[:blank:]]*\(.*\)$/\1/; T; p; q")
+    other_hostname=$(sed --quiet "s/^$my_hostname-to-\(.*\)$/\1/p" \
+      <<< "$segment_name")
+  fi
   ipa-replica-manage re-initialize --from="$other_hostname"
 }
 

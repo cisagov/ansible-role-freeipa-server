@@ -24,20 +24,20 @@ function enable_last_successful_auth_replication {
       cmd_output=$(ipa topologysegment-find "$suffix" --all \
         --name="$segment" --raw)
       # Extract the part where the fractional replication attributes
-      # are specified
+      # are specified.
       old_repl_attr=$(sed --quiet \
         "s/^[[:blank:]]*nsDS5ReplicatedAttributeList:[[:blank:]]*\(.*\)$/\1/p" \
         <<< "$cmd_output")
       # Remove krblastsuccessfulauth from the list of excluded
-      # fractional replication attributes
+      # fractional replication attributes.
       new_repl_attr=${old_repl_attr// krblastsuccessfulauth/}
       # Extract the part where the total replication attributes are
-      # specified
+      # specified.
       old_repl_attr_total=$(sed --quiet \
         "s/^[[:blank:]]*nsDS5ReplicatedAttributeListTotal:[[:blank:]]*\(.*\)$/\1/p" \
         <<< "$cmd_output")
       # Remove krblastsuccessfulauth from the list of excluded total
-      # replication attributes
+      # replication attributes.
       new_repl_attr_total=${old_repl_attr_total// krblastsuccessfulauth/}
 
       # Update the topology segment so that krblastsuccessfulauth is
@@ -80,7 +80,7 @@ function reinitialize_replica {
   # This command may fail if the topology segment we're looking for is
   # the other way around, i.e., if the server where we're running this
   # script is the left node in the topology segment.  In that case
-  # segment_name will be empty and we will run a different command
+  # segment_name will be empty and we will run a different command.
   set +o errexit
   segment_name=$(ipa topologysegment-find "$first_suffix" --pkey-only \
     --rightnode="$my_hostname" \

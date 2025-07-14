@@ -4,13 +4,11 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-# Set up this instance to disable inactive FreeIPA users.
-function setup {
-  # Disable the "KDC:Disable Last Success" password plugin feature.
-  # We don't want this feature enabled because we want to be able to
-  # disable inactive users, which requires us to be able to determine
-  # the last time a user authenticated.
-  #
+# Disable the "KDC:Disable Last Success" password plugin feature.  We
+# don't want this feature enabled because we want to be able to
+# disable inactive users, which requires us to be able to determine
+# the last time a user authenticated.
+function disable_password_plugin_feature {
   # Note that we read in the variable password_plugin_features as a
   # bash array (-a).  We also include the -r option to avoid mangling
   # backslashes.  The read bash builtin does not support long command
@@ -36,11 +34,12 @@ function setup {
   set +o errexit
   "${cmd[@]}"
   set -o errexit
+}
 
-  # Create a role whose members are allowed to enable and disable
-  # users.  By default FreeIPA servers cannot do this, so we need to
-  # give them the permission to do so.
-  #
+# Create a role whose members are allowed to enable and disable users.
+# By default FreeIPA servers cannot do this, so we need to give them
+# the permission to do so.
+function create_role_and_privilege {
   # Note that it is harmless to run these command when they change
   # nothing; but, we must temporarily turn off the bash option errexit
   # since in that case the error codes indicate a failure.
@@ -58,17 +57,27 @@ function setup {
   # Add the host group of FreeIPA servers to the role.
   ipa role-add-member "Enable/Disable Users" --hostgroups=ipaservers
   set -o errexit
-
-  # Enable and start the systemd timer that runs the service that runs
-  # the script that disables inactive users.
-  systemctl daemon-reload
-  systemctl enable disable-inactive-freeipa-users.timer
-  systemctl start disable-inactive-freeipa-users.timer
 }
 
-if [ $# -ne 0 ]; then
-  echo This command takes no options.
+# Enable and start the systemd timer that runs the service that runs
+# the script that disables inactive users.
+function enable_systemd_timer {
+  systemctl daemon-reload
+  systemctl enable --now disable-inactive-freeipa-users.timer
+}
+
+# Set up this instance to disable inactive FreeIPA users.
+function setup {
+  disable_password_plugin_feature
+  create_role_and_privilege
+  enable_systemd_timer
+}
+
+if [ $# -eq 0 ]; then
+  setup
+elif [ $# -eq 1 ]; then
+  $1
+else
+  echo This command takes zero or one argument.
   exit 255
 fi
-
-setup
